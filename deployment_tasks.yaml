@@ -1,51 +1,22 @@
-# These tasks will be merged into deployment graph. Here you
-# can specify new tasks for any roles, even built-in ones.
-
-- id: connectivity-checker_role
-  type: group
-  role: [connectivity-checker_role]
-  parameters:
-    strategy:
-      type: parallel
-
-- id: connectivity-checker-deployment-puppet
+- id: connectivity-checker
+  groups: ["/.*/"]
   type: puppet
-  role: [connectivity-checker_role]
-  requires: [deploy_start]
-  required_for: [deploy_end]
-
-
-#  version: 2.0.0              # tasks v2.0.0 is supporting task-based deployment
-#   cross-depends:
-#     - name: deploy_start
-#   cross-depended-by:
-#     - name: deploy_end
-
+  version: 2.0.0
+  requires: [deploy_start, netconfig]
+  required_for:
+    - deploy_end
+    - firewall
+    - hosts
+    - ssl-keys-saving
+    - openstack-network-start
+  cross-depends:
+    - name: netconfig
+      policy: all
+  reexecute_on: [deploy_changes]
+  condition: "settings:connectivity_checker != null and settings:connectivity_checker.metadata.enabled == true"
   parameters:
-    puppet_manifest: "deploy.pp"
-    puppet_modules: "."
+    puppet_manifest: puppet/manifests/connectivity-checker.pp
+    puppet_modules: puppet/modules:/etc/puppet/modules
     timeout: 3600
-
-#- id: connectivity-checker-post-deployment-sh
-#  version: 2.0.0
-#  type: shell
-#  role: [connectivity-checker_role]
-#  requires: [post_deployment_start]
-#  required_for: [post_deployment_end]
-#  parameters:
-#    cmd: echo post_deployment_task_executed > /tmp/post_deployment
-#    retries: 3
-#    interval: 20
-#    timeout: 180
-
-#- id: connectivity-checker-pre-deployment-sh
-#  version: 2.0.0
-#  type: shell
-#  role: [connectivity-checker_role]
-#  requires: [pre_deployment_start]
-#  required_for: [pre_deployment_end]
-#  parameters:
-#    cmd: echo pre_deployment_task_executed > /tmp/pre_deployment
-#    retries: 3
-#    interval: 20
-#    timeout: 180
+  strategy:
+    type: parallel
