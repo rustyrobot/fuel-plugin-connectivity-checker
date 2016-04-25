@@ -1,11 +1,31 @@
 attributes:
   metadata:
-    # Settings group can be one of "general", "security", "compute", "network",
-    # "storage", "logging", "openstack_services" and "other".
-    group: 'other'
-  connectivity-checker_text:
-    value: 'Set default value'
-    label: 'Text field'
-    description: 'Description for text field'
-    weight: 25
-    type: "text"
+    label: Connectivity checker
+    description: Ability check connectivity between nodes closely after netconfig task
+    weight: 28400
+    # group: network
+  non_destructive:
+    type: checkbox
+    weight: 28401
+    value: false
+    label: Non-destructive mode
+    description: Throw warnings instead fail deployment.
+    # restrictions:
+    #   - action: hide
+    #     condition: "settings:connectivity_checker.metadata.enabled == false"
+  ping_tries:
+    value: "5"
+    label: Ping tries
+    weight: 28402
+    type: text
+    # restrictions:
+    #   - action: hide
+    #     condition: "settings:connectivity_checker.metadata.enabled == false"
+  ping_timeout:
+    value: "20"
+    label: Ping timeout
+    weight: 28403
+    type: text
+    # restrictions:
+    #   - action: hide
+    #     condition: "settings:connectivity_checker.metadata.enabled == false"
