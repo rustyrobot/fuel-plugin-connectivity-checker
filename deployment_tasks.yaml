@@ -1,14 +1,17 @@
 - id: connectivity-checker
   groups: ["/.*/"]
   type: puppet
-  version: 2.0.0
-  requires: [deploy_start, netconfig]
+  version: 2.1.0
+  requires:
+    - deploy_start
+    - netconfig
   required_for:
     - deploy_end
-    - firewall
-    - hosts
-    - ssl-keys-saving
+#    - firewall
+#    - hosts
+#    - ssl-keys-saving
     - openstack-network-start
+    - connectivity_tests
   cross-depends:
     - name: netconfig
       policy: all
